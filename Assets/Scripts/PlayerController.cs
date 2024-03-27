@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _playerCamera = Camera.main;
-        // _playerCamera.transform.position = cameraPosition.position;
         _playerCamera.transform.SetParent(transform);
         _characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -75,10 +74,10 @@ public class PlayerController : MonoBehaviour
             var a = Quaternion.LookRotation(_moveDirection.normalized);
             a.x = a.z = 0;
             print(a);
-            transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.deltaTime * 20f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
         }
         
-        _characterController.Move(_moveDirection * Time.deltaTime);
+        _characterController.Move(_moveDirection * Time.fixedDeltaTime);
         cameraPosition.position = transform.position;
     }
 
