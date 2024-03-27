@@ -1,15 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using FishNet.Object;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [SerializeField] private float walkingSpeed = 5;
     [SerializeField] private float runningSpeed = 10;
     [SerializeField] private float sensitivity;
     [SerializeField] private Transform cameraPosition;
-
-    private float _xRotation = 0f;
+    
     private Vector3 _moveDirection = Vector3.zero;
     private CharacterController _characterController;
     private Camera _playerCamera;
@@ -17,12 +19,26 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canModedCamera = true;
 
+    
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (base.IsOwner)
+        {
+            _playerCamera = Camera.main;
+            _playerCamera.transform.SetParent(transform);
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            gameObject.transform.parent.GetComponentInChildren<CinemachineVirtualCamera>().enabled = false;
+           gameObject.GetComponent<PlayerController>().enabled = false;
+        }
+    }
+
     private void Start()
     {
-        _playerCamera = Camera.main;
-        _playerCamera.transform.SetParent(transform);
-        _characterController = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
+        _characterController = GetComponentInChildren<CharacterController>();
     }
 
     private void Update()
@@ -73,7 +89,6 @@ public class PlayerController : MonoBehaviour
         {
             var a = Quaternion.LookRotation(_moveDirection.normalized);
             a.x = a.z = 0;
-            print(a);
             transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
         }
         
