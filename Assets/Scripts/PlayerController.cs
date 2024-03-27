@@ -48,8 +48,8 @@ public class PlayerController : MonoBehaviour
 
         isRunning = Input.GetKey(KeyCode.LeftShift);
 
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
+        Vector3 forward = cameraPosition.TransformDirection(Vector3.forward);
+        Vector3 right = cameraPosition.TransformDirection(Vector3.right);
 
         float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
         float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
@@ -72,11 +72,10 @@ public class PlayerController : MonoBehaviour
 
         if (curSpeedX != 0 || curSpeedY != 0)
         {
-            var a = cameraPosition.rotation;
+            var a = Quaternion.LookRotation(_moveDirection.normalized);
             a.x = a.z = 0;
+            print(a);
             transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.deltaTime * 20f);
-            // transform.rotation = Quaternion.Lerp(transform.rotation, new Quaternion(0f, cameraPosition.rotation.y, 0), Time.deltaTime * 10);
-            // transform.rotation = Quaternion.Euler(0, cameraPosition.rotation.eulerAngles.y, 0);
         }
         
         _characterController.Move(_moveDirection * Time.deltaTime);
@@ -87,16 +86,6 @@ public class PlayerController : MonoBehaviour
     {
         if (canModedCamera && _playerCamera != null)
         {
-            // float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime;
-            // float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime;
-            // _xRotation -= mouseY;
-            // _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
-            //
-            // transform.Translate(0, 0, mouseX);
-            // // _playerCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-            // //transform.Rotate(Vector3.up*mouseX);
-            // transform.rotation *= Quaternion.Euler(0, mouseX, 0);
-            
             float aimX = Input.GetAxis("Mouse X");
             float aimY = Input.GetAxis("Mouse Y");
             cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity,Vector3.up);
