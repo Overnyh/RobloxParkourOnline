@@ -14,6 +14,7 @@ public class PlayerController : NetworkBehaviour
     
     private Vector3 _moveDirection = Vector3.zero;
     private CharacterController _characterController;
+    private Animator _animator;
     private Camera _playerCamera;
 
     [HideInInspector] public bool canMove = true;
@@ -39,6 +40,7 @@ public class PlayerController : NetworkBehaviour
     private void Start()
     {
         _characterController = GetComponentInChildren<CharacterController>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -74,6 +76,7 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetButton("Jump") && canMove && _characterController.isGrounded)
         {
             _moveDirection.y = 6f;
+            _animator.Play("jump");
         }
         else
         {
@@ -83,18 +86,21 @@ public class PlayerController : NetworkBehaviour
         if (!_characterController.isGrounded)
         {
             _moveDirection.y -= 10f * Time.fixedDeltaTime;
+            
         }
-
+        
+        _animator.SetBool("is_fall", !_characterController.isGrounded);
         if (curSpeedX != 0 || curSpeedY != 0)
         {
             var a = Quaternion.LookRotation(_moveDirection.normalized);
             a.x = a.z = 0;
             transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
         }
-        
+        _animator.SetBool("is_walk", curSpeedX != 0 || curSpeedY != 0);
         _characterController.Move(_moveDirection * Time.fixedDeltaTime);
         cameraPosition.position = transform.position;
     }
+    
 
     private void CameraMove()
     {

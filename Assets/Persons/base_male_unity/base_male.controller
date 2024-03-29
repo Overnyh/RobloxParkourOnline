@@ -82,9 +82,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.038888842
-  m_TransitionOffset: 0.024836585
-  m_ExitTime: 0.9222223
+  m_TransitionDuration: 0.000641793
+  m_TransitionOffset: 0.0000000035061525
+  m_ExitTime: 0.99743336
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -174,9 +174,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.024999976
-  m_TransitionOffset: 0.35526296
-  m_ExitTime: 0.95000005
+  m_TransitionDuration: 0
+  m_TransitionOffset: 0
+  m_ExitTime: 0.9974329
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -255,9 +255,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.13161516
-  m_TransitionOffset: 0.23676945
-  m_ExitTime: 0.79218656
+  m_TransitionDuration: 0.2991733
+  m_TransitionOffset: 0.0021758655
+  m_ExitTime: 0.52762115
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -276,7 +276,7 @@ AnimatorController:
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
   - m_Name: is_jump
     m_Type: 4
