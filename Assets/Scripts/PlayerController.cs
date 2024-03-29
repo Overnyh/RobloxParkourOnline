@@ -177,7 +177,7 @@ public class PlayerController : NetworkBehaviour
         {
             _animator.speed = 1;
             _animator.SetBool("is_on_ladder", false);
-            _characterController.Move((Vector3.up +transform.TransformDirection(Vector3.forward)) *0.1f);
+            //_characterController.Move((Vector3.up +transform.TransformDirection(Vector3.forward)) *0.1f);
             _isClimbing = false;
             _fromLadder = true;
         }
