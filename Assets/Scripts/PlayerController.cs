@@ -85,7 +85,7 @@ public class PlayerController : NetworkBehaviour
 
         if (!_characterController.isGrounded)
         {
-            _moveDirection.y -= 10f * Time.fixedDeltaTime;
+            _moveDirection.y -= 10f * 2 * Time.fixedDeltaTime;
             
         }
         
