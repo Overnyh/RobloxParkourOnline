@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
 {
     [SerializeField] private float walkingSpeed = 5;
     [SerializeField] private float runningSpeed = 10;
+    [SerializeField] private float jumpForse = 6f;
     [SerializeField] private float sensitivity;
     [SerializeField] private Transform cameraPosition;
     
@@ -16,6 +17,8 @@ public class PlayerController : NetworkBehaviour
     private CharacterController _characterController;
     private Animator _animator;
     private Camera _playerCamera;
+    private bool _isClimbing;
+    private bool _fromLadder;
 
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canModedCamera = true;
@@ -54,7 +57,19 @@ public class PlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        CharacterMove();
+        if (_isClimbing)
+        {
+            LadderMove();
+        }
+        else if (_fromLadder)
+        {
+            LadderForce();
+        }
+        else
+        {
+            CharacterMove();
+        }
+        
         CameraMove();
     }
 
@@ -68,14 +83,14 @@ public class PlayerController : NetworkBehaviour
         Vector3 forward = cameraPosition.TransformDirection(Vector3.forward);
         Vector3 right = cameraPosition.TransformDirection(Vector3.right);
 
-        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
+        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxisRaw("Vertical") : 0;
+        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxisRaw("Horizontal") : 0;
         float movementDirectionY = _moveDirection.y;
         _moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
         if (Input.GetButton("Jump") && canMove && _characterController.isGrounded)
         {
-            _moveDirection.y = 6f;
+            _moveDirection.y = jumpForse;
             _animator.Play("jump");
         }
         else
@@ -86,7 +101,7 @@ public class PlayerController : NetworkBehaviour
         if (!_characterController.isGrounded)
         {
             _moveDirection.y -= 10f * 2 * Time.fixedDeltaTime;
-            
+
         }
         
         _animator.SetBool("is_fall", !_characterController.isGrounded);
@@ -100,7 +115,74 @@ public class PlayerController : NetworkBehaviour
         _characterController.Move(_moveDirection * Time.fixedDeltaTime);
         cameraPosition.position = transform.position;
     }
+
+    private void LadderMove()
+    {
+        Vector3 forward = transform.TransformDirection(Vector3.up);
+        Vector3 backward = transform.TransformDirection(Vector3.back + Vector3.up);
+        
+        float curSpeedX = canMove ?  walkingSpeed * Input.GetAxisRaw("Vertical") : 0;
+        _moveDirection = (forward * curSpeedX);
+
+        if (Input.GetButton("Jump") || _characterController.isGrounded)
+        {
+            _moveDirection = backward*jumpForse;
+        }
+        if (curSpeedX != 0)
+        {
+            _animator.speed = 1;
+        }
+        else
+        {
+            _animator.speed = 0;
+        }
+        _characterController.Move(_moveDirection * Time.fixedDeltaTime);
+        cameraPosition.position = transform.position;
+    }
+
+    private void LadderForce()
+    {
+        print("w: "+Input.GetAxisRaw("Vertical"));
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        if (!_characterController.isGrounded)
+        {
+            _moveDirection.y -= 10f * 2 * Time.fixedDeltaTime;
+            _moveDirection += forward * 10f * 2 * Time.fixedDeltaTime;
+        }
+        _characterController.Move(_moveDirection * Time.fixedDeltaTime);
+        cameraPosition.position = transform.position;
+        if (Vector3.Dot(_moveDirection, forward) > 0 || Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
+        {
+            _fromLadder = false;
+            _moveDirection = Vector3.zero;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        print(other);
+        if (other.CompareTag("Ladder"))
+        {
+            _animator.SetBool("is_walk", false);
+            _animator.SetBool("is_fall", false);
+            _animator.SetBool("is_on_ladder", true);
+            _animator.Play("ladder");
+            _characterController.Move(Vector3.up*0.1f);
+            _isClimbing = true;
+        }
+    }
     
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            _animator.speed = 1;
+            _animator.SetBool("is_on_ladder", false);
+            _characterController.Move((Vector3.up +transform.TransformDirection(Vector3.forward)) *0.1f);
+            _isClimbing = false;
+            _fromLadder = true;
+        }
+    }
+
 
     private void CameraMove()
     {
