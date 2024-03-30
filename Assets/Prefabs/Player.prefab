@@ -12,11 +12,13 @@ GameObject:
   - component: {fileID: 2732446872448140568}
   - component: {fileID: 7614933210675405424}
   - component: {fileID: 3133632229978008411}
+  - component: {fileID: 4437733152329069449}
   - component: {fileID: 1211400470646489156}
   - component: {fileID: 90062874240812027}
   - component: {fileID: 159817497897532306}
   - component: {fileID: 2960111067218669986}
   - component: {fileID: 4345305762079675832}
+  - component: {fileID: 4962640291386805997}
   m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
@@ -109,10 +111,33 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.3
   m_Height: 1.45
   m_Direction: 1
   m_Center: {x: 0, y: -0.15, z: 0.13}
+--- !u!136 &4437733152329069449
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630477389035265918}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 0.52
+  m_Direction: 0
+  m_Center: {x: 0, y: -0.98, z: 0}
 --- !u!143 &1211400470646489156
 CharacterController:
   m_ObjectHideFlags: 0
@@ -132,13 +157,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.25
+  m_Height: 1.5
+  m_Radius: 0.3
   m_SlopeLimit: 80
   m_StepOffset: 0.5
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.26, z: 0}
 --- !u!114 &90062874240812027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,7 +182,7 @@ MonoBehaviour:
   walkingSpeed: 5
   runningSpeed: 10
   jumpForse: 8
-  sensitivity: 10
+  sensitivity: 100
   cameraPosition: {fileID: 8300305594285019595}
   canMove: 1
   canModedCamera: 1
@@ -176,14 +201,14 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 7382810606894364060}
   _networkObjectCache: {fileID: 2960111067218669986}
-  _componentConfiguration: 0
+  _componentConfiguration: 1
   _synchronizeParent: 1
   _packing:
     Position: 1
     Rotation: 1
     Scale: 0
-  _interpolation: 2
-  _extrapolation: 2
+  _interpolation: 5
+  _extrapolation: 0
   _enableTeleport: 0
   _teleportThreshold: 1
   _scaleThreshold: 1
@@ -218,12 +243,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 0
   <IsNested>k__BackingField: 1
   <ComponentIndex>k__BackingField: 1
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 90062874240812027}
   - {fileID: 159817497897532306}
+  - {fileID: 4962640291386805997}
   <ParentNetworkObject>k__BackingField: {fileID: 7382810606894364060}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -234,12 +266,6 @@ MonoBehaviour:
   _isGlobal: 0
   _initializeOrder: 0
   _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
-  <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
-  <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 0
 --- !u!54 &4345305762079675832
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -267,6 +293,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &4962640291386805997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630477389035265918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8cac635f24954048aad3a6ff9110beb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 2960111067218669986}
+  _networkObjectCache: {fileID: 2960111067218669986}
+  IgnoredParameters: []
+  _animator: {fileID: 5970997684247443956}
+  _smoothFloats: 1
+  _interpolation: 5
+  _clientAuthoritative: 1
+  _sendToOwner: 0
 --- !u!1 &1256504623856023231
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,6 +407,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 6
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 7807759643866311769
   <IsNested>k__BackingField: 0
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
@@ -376,12 +429,6 @@ MonoBehaviour:
   _isGlobal: 0
   _initializeOrder: 0
   _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 6
-  <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
-  <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 7807759643866311769
 --- !u!1 &3765439901212639794
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,5 +705,10 @@ PrefabInstance:
 --- !u!4 &4516179330033187427 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 69480754689999945, guid: 7084441b472e80b47aa6cb28f33cbfd1, type: 3}
+  m_PrefabInstance: {fileID: 4493019355852897834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5970997684247443956 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7820315547608762334, guid: 7084441b472e80b47aa6cb28f33cbfd1, type: 3}
   m_PrefabInstance: {fileID: 4493019355852897834}
   m_PrefabAsset: {fileID: 0}

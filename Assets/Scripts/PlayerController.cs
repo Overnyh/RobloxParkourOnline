@@ -19,6 +19,8 @@ public class PlayerController : NetworkBehaviour
     private Camera _playerCamera;
     private bool _isClimbing;
     private bool _fromLadder;
+    private bool _isOnPlatform;
+    private Transform _tempPos;
 
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canModedCamera = true;
@@ -97,11 +99,11 @@ public class PlayerController : NetworkBehaviour
         {
             _moveDirection.y = movementDirectionY;
         }
-
-        if (!_characterController.isGrounded)
+        
+        if (!_characterController.isGrounded && !_isOnPlatform)
         {
             _moveDirection.y -= 10f * 2 * Time.fixedDeltaTime;
-
+        
         }
         
         _animator.SetBool("is_fall", !_characterController.isGrounded);
@@ -112,9 +114,20 @@ public class PlayerController : NetworkBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
         }
         _animator.SetBool("is_walk", curSpeedX != 0 || curSpeedY != 0);
-        _characterController.Move(_moveDirection * Time.fixedDeltaTime);
+        Vector3 direction = Vector3.zero;
+        if (_tempPos != null)
+        {
+            // direction = ;
+            // transform.position = Vector3.Lerp(transform.position, _tempPos.position, 0.1f);
+            _characterController.Move(_tempPos.position - transform.position);
+            direction.y = 0;
+        }
+        _characterController.Move(direction +(_moveDirection * Time.fixedDeltaTime));
+        if (_tempPos != null) _tempPos.position = transform.position;
         cameraPosition.position = transform.position;
     }
+    
+    
 
     private void LadderMove()
     {
@@ -169,17 +182,32 @@ public class PlayerController : NetworkBehaviour
             _characterController.Move(Vector3.up*0.1f);
             _isClimbing = true;
         }
+        
+        if (other.CompareTag("Platform"))
+        {
+            GameObject emptyObject = new GameObject("EmptyObject");
+            _tempPos = emptyObject.transform;
+            _tempPos.position = transform.position;
+            _tempPos.parent = other.transform;
+            _isOnPlatform = true;
+        }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Ladder"))
         {
             _animator.speed = 1;
             _animator.SetBool("is_on_ladder", false);
-            //_characterController.Move((Vector3.up +transform.TransformDirection(Vector3.forward)) *0.1f);
             _isClimbing = false;
             _fromLadder = true;
+        }
+        
+        if (other.CompareTag("Platform"))
+        {
+            Destroy(_tempPos.gameObject);
+            _tempPos = null;
+            _isOnPlatform = false;
         }
     }
 
@@ -190,8 +218,8 @@ public class PlayerController : NetworkBehaviour
         {
             float aimX = Input.GetAxis("Mouse X");
             float aimY = Input.GetAxis("Mouse Y");
-            cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity,Vector3.up);
-            cameraPosition.rotation *= Quaternion.AngleAxis(-aimY * sensitivity, Vector3.right);
+            cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity * Time.fixedDeltaTime,Vector3.up);
+            cameraPosition.rotation *= Quaternion.AngleAxis(-aimY * sensitivity * Time.fixedDeltaTime, Vector3.right);
             
             var angleX = cameraPosition.localEulerAngles.x;
             if(angleX > 180 && angleX < 310)
