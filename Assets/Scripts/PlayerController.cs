@@ -20,7 +20,6 @@ public class PlayerController : NetworkBehaviour
     private bool _isClimbing;
     private bool _fromLadder;
     private bool _isOnPlatform;
-    private Transform _tempPos;
 
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canModedCamera = true;
@@ -36,15 +35,15 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
         else
-        {
+        { 
             gameObject.transform.parent.GetComponentInChildren<CinemachineVirtualCamera>().enabled = false;
-           gameObject.GetComponent<PlayerController>().enabled = false;
+            enabled = false;
         }
     }
 
     private void Start()
     {
-        _characterController = GetComponentInChildren<CharacterController>();
+        _characterController = transform.parent.GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
     }
 
@@ -55,7 +54,7 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked? CursorLockMode.Confined: CursorLockMode.Locked;
             canModedCamera = CursorLockMode.Locked == Cursor.lockState;
         }
-	CameraMove();
+	    CameraMove();
     }
 
     private void FixedUpdate()
@@ -73,21 +72,21 @@ public class PlayerController : NetworkBehaviour
             CharacterMove();
         }
 
-	
     }
 
     // ReSharper disable Unity.PerformanceAnalysis
     private void CharacterMove()
     {
-        bool isRunning;
-
-        isRunning = Input.GetKey(KeyCode.LeftShift);
 
         Vector3 forward = cameraPosition.TransformDirection(Vector3.forward);
         Vector3 right = cameraPosition.TransformDirection(Vector3.right);
+        forward.y = 0;
+        forward.Normalize();
+        right.y = 0;
+        right.Normalize();
 
-        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxisRaw("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxisRaw("Horizontal") : 0;
+        float curSpeedX = canMove ? walkingSpeed * Input.GetAxisRaw("Vertical") : 0;
+        float curSpeedY = canMove ? walkingSpeed * Input.GetAxisRaw("Horizontal") : 0;
         float movementDirectionY = _moveDirection.y;
         _moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
@@ -115,17 +114,7 @@ public class PlayerController : NetworkBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
         }
         _animator.SetBool("is_walk", curSpeedX != 0 || curSpeedY != 0);
-        Vector3 direction = Vector3.zero;
-        if (_tempPos != null)
-        {
-            // direction = ;
-            // transform.position = Vector3.Lerp(transform.position, _tempPos.position, 0.1f);
-            _characterController.Move(_tempPos.position - transform.position);
-            direction.y = 0;
-        }
-        _characterController.Move(direction +(_moveDirection * Time.fixedDeltaTime));
-        if (_tempPos != null) _tempPos.position = transform.position;
-        cameraPosition.position = transform.position;
+        _characterController.Move(_moveDirection * Time.fixedDeltaTime);
     }
     
     
@@ -151,7 +140,6 @@ public class PlayerController : NetworkBehaviour
             _animator.speed = 0;
         }
         _characterController.Move(_moveDirection * Time.fixedDeltaTime);
-        cameraPosition.position = transform.position;
     }
 
     private void LadderForce()
@@ -164,7 +152,6 @@ public class PlayerController : NetworkBehaviour
             _moveDirection += forward * 10f * 2 * Time.fixedDeltaTime;
         }
         _characterController.Move(_moveDirection * Time.fixedDeltaTime);
-        cameraPosition.position = transform.position;
         if (Vector3.Dot(_moveDirection, forward) > 0 || Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
         {
             _fromLadder = false;
@@ -186,10 +173,7 @@ public class PlayerController : NetworkBehaviour
         
         if (other.CompareTag("Platform"))
         {
-            GameObject emptyObject = new GameObject("EmptyObject");
-            _tempPos = emptyObject.transform;
-            _tempPos.position = transform.position;
-            _tempPos.parent = other.transform;
+            transform.parent.parent = other.transform;
             _isOnPlatform = true;
         }
     }
@@ -206,8 +190,7 @@ public class PlayerController : NetworkBehaviour
         
         if (other.CompareTag("Platform"))
         {
-            Destroy(_tempPos.gameObject);
-            _tempPos = null;
+            transform.parent.parent = null;
             _isOnPlatform = false;
         }
     }
