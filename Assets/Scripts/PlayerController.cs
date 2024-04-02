@@ -55,6 +55,7 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked? CursorLockMode.Confined: CursorLockMode.Locked;
             canModedCamera = CursorLockMode.Locked == Cursor.lockState;
         }
+	CameraMove();
     }
 
     private void FixedUpdate()
@@ -71,8 +72,8 @@ public class PlayerController : NetworkBehaviour
         {
             CharacterMove();
         }
-        
-        CameraMove();
+
+	
     }
 
     // ReSharper disable Unity.PerformanceAnalysis
@@ -218,8 +219,8 @@ public class PlayerController : NetworkBehaviour
         {
             float aimX = Input.GetAxis("Mouse X");
             float aimY = Input.GetAxis("Mouse Y");
-            cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity * Time.fixedDeltaTime,Vector3.up);
-            cameraPosition.rotation *= Quaternion.AngleAxis(-aimY * sensitivity * Time.fixedDeltaTime, Vector3.right);
+            cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity * Time.deltaTime,Vector3.up);
+            cameraPosition.rotation *= Quaternion.AngleAxis(-aimY * sensitivity * Time.deltaTime, Vector3.right);
             
             var angleX = cameraPosition.localEulerAngles.x;
             if(angleX > 180 && angleX < 310)
