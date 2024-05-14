@@ -23,8 +23,11 @@ public class PlayerController : NetworkBehaviour
 
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canModedCamera = true;
+    private float _xRotation = 0f;
+    private float _yRotation = 0f;
+    private Vector3 _spawnPoint;
 
-    
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -45,6 +48,7 @@ public class PlayerController : NetworkBehaviour
     {
         _characterController = transform.parent.GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
+        _spawnPoint = transform.parent.transform.position;
     }
 
     private void Update()
@@ -54,7 +58,8 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked? CursorLockMode.Confined: CursorLockMode.Locked;
             canModedCamera = CursorLockMode.Locked == Cursor.lockState;
         }
-	    CameraMove();
+        _yRotation += Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime;
+        _xRotation -= Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime;
     }
 
     private void FixedUpdate()
@@ -71,13 +76,13 @@ public class PlayerController : NetworkBehaviour
         {
             CharacterMove();
         }
-
+	    CameraMove();
+        
     }
 
     // ReSharper disable Unity.PerformanceAnalysis
     private void CharacterMove()
     {
-
         Vector3 forward = cameraPosition.TransformDirection(Vector3.forward);
         Vector3 right = cameraPosition.TransformDirection(Vector3.right);
         forward.y = 0;
@@ -111,7 +116,7 @@ public class PlayerController : NetworkBehaviour
         {
             var a = Quaternion.LookRotation(_moveDirection.normalized);
             a.x = a.z = 0;
-            transform.rotation = Quaternion.Slerp(transform.rotation, a, Time.fixedDeltaTime * 20f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, a, 0.4f);
         }
         _animator.SetBool("is_walk", curSpeedX != 0 || curSpeedY != 0);
         _characterController.Move(_moveDirection * Time.fixedDeltaTime);
@@ -160,7 +165,6 @@ public class PlayerController : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        print(other);
         if (other.CompareTag("Ladder"))
         {
             _animator.SetBool("is_walk", false);
@@ -170,12 +174,27 @@ public class PlayerController : NetworkBehaviour
             _characterController.Move(Vector3.up*0.1f);
             _isClimbing = true;
         }
-        
         if (other.CompareTag("Platform"))
         {
             transform.parent.parent = other.transform;
             _isOnPlatform = true;
         }
+
+        if (other.CompareTag("Dead"))
+        {
+            StartCoroutine(Respawn());
+        }
+    }
+
+    private IEnumerator Respawn()
+    {
+        _animator.Play("die");
+        canMove = false;
+        yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
+        _animator.Rebind();
+        _characterController.transform.position = _spawnPoint;
+        canMove = true;
+        
     }
 
     private void OnTriggerExit(Collider other)
@@ -200,10 +219,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (canModedCamera && _playerCamera != null)
         {
-            float aimX = Input.GetAxis("Mouse X");
-            float aimY = Input.GetAxis("Mouse Y");
-            cameraPosition.rotation *= Quaternion.AngleAxis(aimX * sensitivity * Time.deltaTime,Vector3.up);
-            cameraPosition.rotation *= Quaternion.AngleAxis(-aimY * sensitivity * Time.deltaTime, Vector3.right);
+            cameraPosition.transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0f);
             
             var angleX = cameraPosition.localEulerAngles.x;
             if(angleX > 180 && angleX < 310)

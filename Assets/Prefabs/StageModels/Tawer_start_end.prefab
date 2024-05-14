@@ -65,6 +65,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7250108627332883000, guid: 7583d9daf2bc80446bddb0dbbbcf1144, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -7250108627332883000, guid: 7583d9daf2bc80446bddb0dbbbcf1144, type: 3}
       propertyPath: m_TagString
       value: Ladder
       objectReference: {fileID: 0}

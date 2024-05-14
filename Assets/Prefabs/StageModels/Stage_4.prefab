@@ -433,6 +433,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2610283191560779838}
   - component: {fileID: 1219361439550369934}
+  - component: {fileID: -232742303645558068}
   m_Layer: 0
   m_Name: Stage_4
   m_TagString: Untagged
@@ -480,6 +481,38 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-232742303645558068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3564500252362397751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 17375117403898465722
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours: []
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    LocalScale: {x: 0, y: 0, z: 0}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
 --- !u!1 &4130267453279338881
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,7 +560,7 @@ GameObject:
   - component: {fileID: 1883365317856676928}
   m_Layer: 0
   m_Name: stage_4_deads
-  m_TagString: Untagged
+  m_TagString: Dead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -632,7 +665,7 @@ GameObject:
   - component: {fileID: 6792650440369029772}
   m_Layer: 0
   m_Name: stage_4_rotation_deads
-  m_TagString: Platform
+  m_TagString: Dead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -775,7 +808,7 @@ GameObject:
   - component: {fileID: 1412693397738012826}
   - component: {fileID: 3028511433762653179}
   - component: {fileID: 3158941484230010747}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: stage_4_ladder
   m_TagString: Ladder
   m_Icon: {fileID: 0}
